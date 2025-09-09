@@ -297,7 +297,14 @@ static const CGFloat MASButtonFontSize = 11;
         case MASShortcutViewStyleTexturedRect: hintButtonWidth += 2.0; break;
         case MASShortcutViewStyleRounded: hintButtonWidth += 3.0; break;
         case MASShortcutViewStyleFlat: hintButtonWidth -= 8.0 - (_shortcutCell.font.pointSize - MASButtonFontSize); break;
-        default: break;
+        default:
+			if (@available(macOS 26, *)) {
+				// On macOS 26, the right-aligned symbol for Clear/Escape is drawn further to the left;
+                // we account for this by allocating more space for the hint area so that the symbol still appears
+                // centered within the hint area.
+				hintButtonWidth += 8.0;
+			}
+			break;
     }
     CGRectDivide(self.bounds, &hintRect, &shortcutRect, hintButtonWidth, CGRectMaxXEdge);
     if (shortcutRectRef)  *shortcutRectRef = shortcutRect;
